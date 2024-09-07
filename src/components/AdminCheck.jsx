@@ -1,9 +1,9 @@
 import { Navigate, Outlet, useLocation } from "react-router-dom";
 import { useUser } from "@clerk/clerk-react";
-import AdminHeader from "./admin-components/AdminHeader";
+
 import Sidebar from "./admin-components/SideBar";
 
-const AdminCheck = ({ children }) => {
+const AdminCheck = () => {
   const { isSignedIn, isLoaded, user } = useUser();
   const location = useLocation();
 
