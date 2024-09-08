@@ -31,6 +31,7 @@ const FileUpload = ({ optionNotPresent }) => {
     />
   ) : (
     <FileUploadModal>
+      {/* <input type="text" name="" id="" /> */}
       <Dropzone onDrop={fileHandler}>
         {({ getRootProps, getInputProps }) => (
           <div

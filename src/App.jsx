@@ -7,6 +7,7 @@ import ProtectedRoute from "./components/ProtectedRoutes";
 import Admin from "./pages/Admin";
 import AdminCheck from "./components/AdminCheck";
 import React from "react";
+import Orders from "./pages/Orders";
 
 function App() {
   const { isLoaded, user } = useUser();
@@ -23,7 +24,7 @@ function App() {
         <>
           <Route path="/*" element={<AdminCheck></AdminCheck>}>
             <Route index element={<Admin />} />
-            <Route path="billing" element={<div>Billing</div>} />
+            <Route path="orders" element={<Orders />} />
             <Route path="customers" element={<div>Customers</div>} />
             <Route path="*" element={<div>Not Found</div>} />
           </Route>

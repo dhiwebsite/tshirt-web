@@ -2,6 +2,7 @@ import { Navigate, Outlet, useLocation } from "react-router-dom";
 import { useUser } from "@clerk/clerk-react";
 
 import Sidebar from "./admin-components/SideBar";
+import MobileNav from "./admin-components/MobileNav";
 
 const AdminCheck = () => {
   const { isSignedIn, isLoaded, user } = useUser();
@@ -20,7 +21,7 @@ const AdminCheck = () => {
   return (
     <main className="root">
       <Sidebar />
-      {/* <MobileNav /> */}
+      <MobileNav />
       <div className="root-container">
         <div className="wrapper">
           <Outlet />

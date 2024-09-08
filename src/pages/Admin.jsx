@@ -1,4 +1,4 @@
-import { DataTable } from "@/components/admin-components/data-table";
+import DesignTable from "@/components/admin-components/DesignTable";
 import FileUpload from "@/components/admin-components/FileUpload";
 import React, { useState } from "react";
 import CreatableSelect from "react-select/creatable";
@@ -21,6 +21,9 @@ const ReactSelect = ({ getOption }) => {
     <CreatableSelect
       isClearable
       options={animeCharacters}
+      onCreateOption={(value) => {
+        console.log(value);
+      }}
       onChange={(option) => {
         getOption(option?.value);
       }}
@@ -39,35 +42,6 @@ const ReactSelect = ({ getOption }) => {
 };
 
 function Admin() {
-  const adminDesignTableColumns = [
-    {
-      accessorKey: "designTheme",
-      header: "Design Theme",
-    },
-    {
-      accessorKey: "designCount",
-      header: "No Of Designs",
-    },
-
-    {
-      accessorKey: "orders",
-      header: "Orders",
-    },
-    {
-      accessorKey: "actions",
-      header: "Actions",
-      cell: ({ value }) => (
-        <div className="flex">
-          <div className="font-bold">View</div>
-
-          <div className="ml-4">
-            <FileUpload optionNotPresent={false} />
-          </div>
-        </div>
-      ),
-    },
-  ];
-
   const [optionNotPresent, setOptionNotPresent] = useState(true);
   const [selectedOption, setSelectedOption] = useState("");
   const getOption = (value) => {
@@ -92,16 +66,7 @@ function Admin() {
       <div className="my-4">
         <h4 className="text-2xl font-bold">Desgin Table</h4>
       </div>
-      <DataTable
-        columns={adminDesignTableColumns}
-        data={[
-          {
-            designTheme: "Naruto",
-            designCount: 45,
-            orders: 10,
-          },
-        ]}
-      />
+      <DesignTable />
     </>
   );
 }

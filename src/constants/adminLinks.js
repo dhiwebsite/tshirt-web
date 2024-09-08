@@ -4,7 +4,7 @@ export const navLinks = [
     label: "Dashboard",
   },
   {
-    route: "/billing",
-    label: "Billing",
+    route: "/orders",
+    label: "Orders",
   },
 ];
