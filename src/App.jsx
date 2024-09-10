@@ -8,6 +8,7 @@ import Admin from "./pages/Admin";
 import AdminCheck from "./components/AdminCheck";
 import React from "react";
 import Orders from "./pages/Orders";
+import Checkout from "./pages/users/Checkout";
 
 function App() {
   const { isLoaded, user } = useUser();
@@ -31,19 +32,12 @@ function App() {
         </>
       ) : (
         <>
-          <Route
-            path="/"
-            element={
-              <ProtectedRoute>
-                <Home />
-              </ProtectedRoute>
-            }
-          />
-
-          <Route path="/cloth" element={<div>Cloth</div>} />
-
-          <Route path="/orders" element={<div>Orders</div>} />
-          <Route path="/*" element={<div>Not Found</div>} />
+          <Route path="/*" element={<ProtectedRoute></ProtectedRoute>}>
+            <Route index element={<Home />} />
+            <Route path="checkout" element={<Checkout />} />
+            <Route path="orders" element={<div>Orders</div>} />
+            <Route path="*" element={<div>Not Found</div>} />
+          </Route>
         </>
       )}
       <Route path="/sign-in/*" element={<SignInPage />} />

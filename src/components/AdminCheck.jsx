@@ -3,7 +3,7 @@ import { useUser } from "@clerk/clerk-react";
 
 import Sidebar from "./admin-components/SideBar";
 import MobileNav from "./admin-components/MobileNav";
-
+import { navLinks } from "@/constants/adminLinks";
 const AdminCheck = () => {
   const { isSignedIn, isLoaded, user } = useUser();
   const location = useLocation();
@@ -20,8 +20,8 @@ const AdminCheck = () => {
 
   return (
     <main className="root">
-      <Sidebar />
-      <MobileNav />
+      <Sidebar links={navLinks} />
+      <MobileNav links={navLinks} />
       <div className="root-container">
         <div className="wrapper">
           <Outlet />

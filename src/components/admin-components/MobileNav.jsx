@@ -10,7 +10,7 @@ import { Menu } from "lucide-react";
 import { ThemeProviderContext } from "../theme-provider";
 import { ModeToggle } from "../mode-toggle";
 
-const MobileNav = () => {
+const MobileNav = ({ name, links }) => {
   const location = useLocation();
   const pathname = location.pathname;
   const { theme } = useContext(ThemeProviderContext);
@@ -18,7 +18,7 @@ const MobileNav = () => {
     <header className="header">
       <Link to={"/"} className="flex-center gap-2 md:py-2">
         <h1 className=" inline-block text-transparent bg-clip-text font-bold text-3xl pb-[4px]">
-          Admin Dashboard
+          {name || "Admin Dashboard"}
         </h1>
       </Link>
       <nav className="flex gap-2">
@@ -31,11 +31,13 @@ const MobileNav = () => {
             <SheetContent className="sheet-content sm:w-64">
               <>
                 <div className="flex items-center justify-around my-4">
-                  <p className="text-1xl font-bold"> Admin Dashboard</p>
+                  <p className="text-1xl font-bold">
+                    {name || "Admin Dashboard"}
+                  </p>
                   <ModeToggle />
                 </div>
                 <ul className="header-nav_elements">
-                  {navLinks.map((link) => {
+                  {links.map((link) => {
                     const isActive = link.route === pathname;
 
                     return (

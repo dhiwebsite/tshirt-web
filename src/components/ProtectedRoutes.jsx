@@ -1,5 +1,8 @@
-import { Navigate, useLocation } from "react-router-dom";
+import { Navigate, Outlet, useLocation } from "react-router-dom";
 import { useUser } from "@clerk/clerk-react";
+import Sidebar from "./admin-components/SideBar";
+import MobileNav from "./admin-components/MobileNav";
+import { userLinks } from "@/constants";
 
 const ProtectedRoutes = ({ children }) => {
   const { isSignedIn, isLoaded } = useUser();
@@ -9,10 +12,20 @@ const ProtectedRoutes = ({ children }) => {
     return "Loading...";
   }
 
-  return isSignedIn ? (
-    children
-  ) : (
-    <Navigate to="/sign-in" state={{ from: location }} />
+  if (!isSignedIn) {
+    <Navigate to="/sign-in" state={{ from: location }} />;
+  }
+
+  return (
+    <main className="root">
+      <Sidebar name={"Hello User"} links={userLinks} />
+      <MobileNav name={"Hello User"} links={userLinks} />
+      <div className="root-container">
+        <div className="wrapper">
+          <Outlet />
+        </div>
+      </div>
+    </main>
   );
 };
 

@@ -16,7 +16,7 @@ function DesignSelectionTable() {
   ];
   return (
     <>
-      <div className=" mx-2 p-3 grid sm:grid-cols-1 md:grid-cols-3 gap-2">
+      <div className="p-3 grid sm:grid-cols-1 md:grid-cols-3 gap-1">
         <div className="border-2 border-red-400 rounded-xl p-1">
           <ReactSelect />
           <div className="flex flex-wrap sm:flex-nowrap sm:flex-col">
