@@ -17,14 +17,26 @@ const ReactSelect = ({ getOption }) => {
     { label: "Levi Ackerman", value: "levi" },
   ];
 
+  const [value, setValue] = useState(null);
   return (
     <CreatableSelect
       isClearable
       options={animeCharacters}
       onCreateOption={(value) => {
-        console.log(value);
+        animeCharacters.push({
+          label: value,
+          value,
+        });
+
+        setValue({
+          label: value,
+          value,
+        });
+        getOption(value);
       }}
+      value={value}
       onChange={(option) => {
+        setValue(option);
         getOption(option?.value);
       }}
       placeholder={"Create or Search Design Theme"}
@@ -46,6 +58,7 @@ function Admin() {
   const [selectedOption, setSelectedOption] = useState("");
   const getOption = (value) => {
     if (value && value.length > 0) {
+      console.log(value);
       setOptionNotPresent(false);
       setSelectedOption(value);
     } else {

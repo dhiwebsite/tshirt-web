@@ -1,5 +1,6 @@
 import React from "react";
 import ReactSelect from "react-select";
+import ImagePlacer from "./ImagePlacer";
 
 function DesignSelectionTable() {
   const animeCharacters = [
@@ -16,21 +17,12 @@ function DesignSelectionTable() {
   ];
   return (
     <>
-      <div className="p-3 grid sm:grid-cols-1 md:grid-cols-3 gap-1">
-        <div className="border-2 border-red-400 rounded-xl p-1">
-          <ReactSelect />
-          <div className="flex flex-wrap sm:flex-nowrap sm:flex-col">
-            {animeCharacters.map((design) => {
-              return (
-                <div key={design.value} className="my-2 w-max">
-                  <p className="font-bold mx-2">{design.value}</p> <hr />
-                </div>
-              );
-            })}
-          </div>
+      <div className="">
+        <div className="mx-4">
+          <ReactSelect options={animeCharacters} placeholder="Search Designs" />
         </div>
 
-        <div className="md:col-span-2 border-2 border-red-400 rounded-xl"></div>
+        <ImagePlacer />
       </div>
     </>
   );

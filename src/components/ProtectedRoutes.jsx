@@ -4,7 +4,7 @@ import Sidebar from "./admin-components/SideBar";
 import MobileNav from "./admin-components/MobileNav";
 import { userLinks } from "@/constants";
 
-const ProtectedRoutes = ({ children }) => {
+const ProtectedRoutes = () => {
   const { isSignedIn, isLoaded } = useUser();
   const location = useLocation();
 
@@ -12,11 +12,7 @@ const ProtectedRoutes = ({ children }) => {
     return "Loading...";
   }
 
-  if (!isSignedIn) {
-    <Navigate to="/sign-in" state={{ from: location }} />;
-  }
-
-  return (
+  return isSignedIn ? (
     <main className="root">
       <Sidebar name={"Hello User"} links={userLinks} />
       <MobileNav name={"Hello User"} links={userLinks} />
@@ -26,6 +22,8 @@ const ProtectedRoutes = ({ children }) => {
         </div>
       </div>
     </main>
+  ) : (
+    <Navigate to="/sign-in" state={{ from: location }} />
   );
 };
 
