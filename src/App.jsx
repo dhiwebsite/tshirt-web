@@ -9,6 +9,7 @@ import AdminCheck from "./components/AdminCheck";
 import React from "react";
 import Orders from "./pages/Orders";
 import Checkout from "./pages/users/Checkout";
+import Design from "./pages/users/Design";
 
 function App() {
   const { isLoaded, user } = useUser();
@@ -36,6 +37,7 @@ function App() {
             <Route index element={<Home />} />
             <Route path="checkout" element={<Checkout />} />
             <Route path="orders" element={<div>Orders</div>} />
+            <Route path="design" element={<Design />} />
             <Route path="*" element={<div>Not Found</div>} />
           </Route>
         </>

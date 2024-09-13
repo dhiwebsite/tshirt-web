@@ -28,7 +28,7 @@ const Sidebar = ({ name, links }) => {
             <ul className="sidebar-nav_elements">
               {links.map((link) => {
                 const isActive = link.route === pathname;
-                console.log(theme);
+
                 return (
                   <li
                     key={link.route}
