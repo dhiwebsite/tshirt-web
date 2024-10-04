@@ -11,10 +11,10 @@ const UploadProvider = ({ children }) => {
   const { setNotifications } = useContext(NotificationContext);
 
   // Update progress for a specific upload
-  const updateProgress = (jobId, index, progress) => {
+  const updateProgress = (category, index, progress) => {
     setUploads((prevUploads) =>
       prevUploads.map((upload) =>
-        upload.jobId === jobId
+        upload.category === category
           ? { ...upload, progress: { ...upload.progress, [index]: progress } }
           : upload
       )
@@ -22,15 +22,15 @@ const UploadProvider = ({ children }) => {
   };
 
   // Mark upload as failed
-  const markAsFailed = (jobId, index, file, jobName) => {
+  const markAsFailed = (category, index, file) => {
     setFailedUploads((prevFailed) => ({
       ...prevFailed,
-      [jobId]: [...(prevFailed[jobId] || []), index],
+      [category]: [...(prevFailed[category] || []), index],
     }));
     setNotifications((prev) => [
       ...prev,
       {
-        message: `File ${file.path} failed to upload for ${jobName}`,
+        message: `File ${file.path} failed to upload for }`,
         status: false,
         id: file.path,
       },
@@ -38,67 +38,67 @@ const UploadProvider = ({ children }) => {
   };
 
   // Mark job as complete
-  const completeUpload = (jobId, jobName) => {
-    setIsUploading((prev) => ({ ...prev, [jobId]: false }));
+  const completeUpload = (category) => {
+    setIsUploading((prev) => ({ ...prev, [category]: false }));
     setNotifications((prev) => [
       ...prev,
       {
-        message: `Files for ${jobName} uploaded successfully`,
+        message: `Files uploaded successfully`,
         status: true,
-        id: jobId,
+        id: category,
       },
     ]);
     setUploads((prevUploads) =>
-      prevUploads.filter((upload) => upload.jobId !== jobId)
+      prevUploads.filter((upload) => upload.category !== category)
     );
   };
 
   // Check if all files for a job are uploaded
-  const checkAllUploaded = (jobId) => {
-    const upload = uploads.find((upload) => upload.jobId === jobId);
+  const checkAllUploaded = (category) => {
+    const upload = uploads.find((upload) => upload.category === category);
     return upload && Object.values(upload.progress).every((p) => p === 100);
   };
 
   // Start upload process
-  const startUpload = (files, uploadFunction, jobName, jobId) => {
-    const newUpload = { jobId, files, jobName, progress: {} };
+  const startUpload = (files, uploadFunction, category) => {
+    const newUpload = { category, files, progress: {} };
 
     setUploads((prev) => [...prev, newUpload]);
-    setIsUploading((prev) => ({ ...prev, [jobId]: true }));
+    setIsUploading((prev) => ({ ...prev, [category]: true }));
 
     files.forEach((file, index) => {
-      uploadFunction(file, index, jobId)
-        .then(() => updateProgress(jobId, index, 100))
+      uploadFunction(file, index, category)
+        .then(() => updateProgress(category, index, 100))
         .catch((error) => {
           console.error("Error uploading file:", error);
-          updateProgress(jobId, index, 0);
-          markAsFailed(jobId, index, file, jobName);
+          updateProgress(category, index, 0);
+          markAsFailed(category, index, file);
         })
         .finally(() => {
-          if (checkAllUploaded(jobId)) {
-            completeUpload(jobId, jobName);
+          if (checkAllUploaded(category)) {
+            completeUpload(category);
           }
         });
     });
   };
 
   // Retry a failed upload
-  const retryUpload = (file, index, uploadFunction, jobName, jobId) => {
+  const retryUpload = (file, index, uploadFunction, category) => {
     setFailedUploads((prevFailed) => ({
       ...prevFailed,
-      [jobId]: (prevFailed[jobId] || []).filter((i) => i !== index),
+      [category]: (prevFailed[category] || []).filter((i) => i !== index),
     }));
 
-    uploadFunction(file, index, jobId)
-      .then(() => updateProgress(jobId, index, 100))
+    uploadFunction(file, index, category)
+      .then(() => updateProgress(category, index, 100))
       .catch((error) => {
         console.error("Error uploading file:", error);
-        updateProgress(jobId, index, 0);
-        markAsFailed(jobId, index, file, jobName);
+        updateProgress(category, index, 0);
+        markAsFailed(category, index, file);
       })
       .finally(() => {
-        if (checkAllUploaded(jobId)) {
-          completeUpload(jobId, jobName);
+        if (checkAllUploaded(category)) {
+          completeUpload(category);
         }
       });
   };

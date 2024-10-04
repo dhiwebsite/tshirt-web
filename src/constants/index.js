@@ -10,3 +10,5 @@ export const userLinks = [
     label: "Orders",
   },
 ];
+
+export const API_URL = "http://localhost:8000/";

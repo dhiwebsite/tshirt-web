@@ -12,32 +12,72 @@ import {
 } from "@/components/ui/sheet";
 import { Minus, Plus } from "lucide-react";
 import { useState } from "react";
-
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
+import axios from "axios";
+import { useUser } from "@clerk/clerk-react";
+import { API_URL } from "@/constants";
+import { useQuery } from "@tanstack/react-query";
+import { request } from "@/global/axiosGlobal";
 export function CheckoutAddress() {
-  const addresses = [
-    {
-      addressLine1: "123 Main St",
-      addressLine2: "Apt 4B",
-      landmark: "Near Central Park",
-      pincode: "10001",
-      city: "New York",
-      state: "NY",
-      country: "USA",
-      addressType: "home",
+  const [addressType, setAddressType] = useState("home");
+  const { user } = useUser();
+
+  const { data, isLoading } = useQuery({
+    queryKey: ["addresses", user.id],
+    queryFn: () => {
+      return axios.get(`http://localhost:8000/addresses?userId=${user.id}`);
     },
-    {
-      addressLine1: "456 Elm St",
-      addressLine2: "Suite 5A",
-      landmark: "Next to City Hall",
-      pincode: "90001",
-      city: "Los Angeles",
-      state: "CA",
-      country: "USA",
-      addressType: "away",
-    },
-  ];
+  });
+  const [address, setAddress] = useState({
+    addressLine1: "",
+    addressLine2: "",
+    landmark: "",
+    pincode: "",
+    city: "",
+    state: "",
+    country: "",
+  });
+
+  const submitHandler = async () => {
+    try {
+      const payload = {
+        addressType,
+        address,
+        userId: user.id,
+      };
+
+      const response = await axios.post(`${API_URL}submit-address`, payload);
+
+      console.log("Response:", response.data);
+    } catch (error) {
+      console.error("Error submitting address:", error);
+    }
+  };
+
+  const [selectedAddress, setSelectedAddress] = useState({});
 
   const [showAddress, setShowAddress] = useState(false);
+
+  const handleInputChange = (e) => {
+    const { id, value } = e.target;
+    setAddress((prevAddress) => ({
+      ...prevAddress,
+      [id]: value,
+    }));
+  };
+
+  if (isLoading) {
+    return <div>Loading..</div>;
+  }
+  console.log(data?.data);
   return (
     <div className="">
       <Sheet>
@@ -59,17 +99,36 @@ export function CheckoutAddress() {
             <Button
               onClick={() => {
                 setShowAddress(!showAddress);
+                setAddress({
+                  addressLine1: "",
+                  addressLine2: "",
+                  landmark: "",
+                  pincode: "",
+                  city: "",
+                  state: "",
+                  country: "",
+                });
               }}
             >
               {showAddress ? <Minus /> : <Plus />}
             </Button>
 
             <div className="flex gap-6">
-              {addresses.map((address) => {
+              {data?.data.map((address, index) => {
                 return (
-                  <div className="border border-black p-2 rounded-sm cursor-pointer">
+                  <div
+                    key={index}
+                    className={`border border-black p-2 rounded-sm cursor-pointer ${
+                      selectedAddress.index === index && "border-emerald-700"
+                    }`}
+                    onClick={() => {
+                      setSelectedAddress({ address, index });
+                      setShowAddress(true);
+                      setAddress(address);
+                      setAddressType(address.addressType);
+                    }}
+                  >
                     <p>{address.addressType}</p>
-
                     <div>{address.city}</div>
                   </div>
                 );
@@ -79,34 +138,59 @@ export function CheckoutAddress() {
           {showAddress && (
             <div className="sm:flex sm:justify-center w-full">
               <div className="sm:w-2/4 my-1">
+                <Select
+                  onValueChange={(option) => {
+                    setAddressType(option);
+                  }}
+                  value={addressType}
+                >
+                  <SelectTrigger className="my-2">
+                    <SelectValue placeholder="Select Address Type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      <SelectLabel>Address</SelectLabel>
+                      <SelectItem value="home">Home</SelectItem>
+                      <SelectItem value="work">Work</SelectItem>
+                      <SelectItem value="away">Away</SelectItem>
+                      <SelectItem value="other">Other</SelectItem>
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+
                 <div className="">
                   <Input
-                    id="name"
+                    id="addressLine1"
                     placeholder="Address Line 1"
-                    className="col-span-3"
+                    value={address.addressLine1}
+                    onChange={handleInputChange}
                   />
                 </div>
+
                 <div className="my-[8px]">
                   <Input
-                    id="username"
+                    id="addressLine2"
                     placeholder="Address Line 2"
-                    className="col-span-3"
+                    value={address.addressLine2}
+                    onChange={handleInputChange}
                   />
                 </div>
 
                 <div className="flex-col md:flex-row flex justify-between gap-2 my-1">
                   <div className="md:w-2/4">
                     <Input
-                      id="username"
-                      className="col-span-3"
-                      placeholder="9765409111"
+                      id="landmark"
+                      placeholder="Landmark"
+                      value={address.landmark}
+                      onChange={handleInputChange}
                     />
                   </div>
                   <div className="md:w-2/4">
                     <Input
-                      id="username"
+                      id="pincode"
                       placeholder="Pincode"
-                      className="col-span-3"
+                      value={address.pincode}
+                      onChange={handleInputChange}
                     />
                   </div>
                 </div>
@@ -114,32 +198,29 @@ export function CheckoutAddress() {
                 <div className="flex-col md:flex-row flex justify-between gap-2 my-1">
                   <div className="md:w-2/4">
                     <Input
-                      id="username"
-                      placeholder="Landmark"
-                      className="col-span-3"
+                      id="city"
+                      placeholder="City"
+                      value={address.city}
+                      onChange={handleInputChange}
                     />
                   </div>
                   <div className="md:w-2/4">
                     <Input
-                      id="username"
-                      className="col-span-3"
-                      placeholder="City"
+                      id="state"
+                      placeholder="State"
+                      value={address.state}
+                      onChange={handleInputChange}
                     />
                   </div>
                 </div>
+
                 <div className="flex-col md:flex-row flex justify-between gap-2 my-1">
                   <div className="md:w-2/4">
                     <Input
-                      id="username"
-                      placeholder="State"
-                      className="col-span-3"
-                    />
-                  </div>
-                  <div className="md:w-2/4">
-                    <Input
-                      id="username"
+                      id="country"
                       placeholder="Country"
-                      className="col-span-3"
+                      value={address.country}
+                      onChange={handleInputChange}
                     />
                   </div>
                 </div>
@@ -148,7 +229,9 @@ export function CheckoutAddress() {
           )}
           <SheetFooter className="my-2 md:my-0">
             <SheetClose asChild>
-              <Button type="submit">Proceed</Button>
+              <Button type="submit" onClick={submitHandler}>
+                Proceed
+              </Button>
             </SheetClose>
           </SheetFooter>
         </SheetContent>

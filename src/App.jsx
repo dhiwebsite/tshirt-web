@@ -10,6 +10,7 @@ import React from "react";
 import Orders from "./pages/Orders";
 import Checkout from "./pages/users/Checkout";
 import Design from "./pages/users/Design";
+import Price from "./pages/Price";
 
 function App() {
   const { isLoaded, user } = useUser();
@@ -28,6 +29,8 @@ function App() {
             <Route index element={<Admin />} />
             <Route path="orders" element={<Orders />} />
             <Route path="customers" element={<div>Customers</div>} />
+            <Route path="pricing" element={<Price />} />
+
             <Route path="*" element={<div>Not Found</div>} />
           </Route>
         </>

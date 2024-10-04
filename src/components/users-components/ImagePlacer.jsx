@@ -1,66 +1,41 @@
-import React from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import * as fabric from "fabric";
-import { useEffect, useRef, useState } from "react";
+import { ThemeProviderContext, useTheme } from "../theme-provider";
 
-const ImagePlacer = ({ logo }) => {
-  const canvasref = useRef();
+const ImagePlacer = ({ logo, getImageUrl }) => {
+  const canvasRef = useRef();
   const [canvas, setCanvas] = useState(null);
+  const { theme } = useContext(ThemeProviderContext);
+
   useEffect(() => {
-    let can = new fabric.Canvas(canvasref.current);
+    // Initialize canvas
+    let can = new fabric.Canvas(canvasRef.current);
     setCanvas(can);
 
     return () => {
-      can.dispose();
+      can.dispose(); // Cleanup
     };
   }, []);
 
   useEffect(() => {
-    let imgElement = document.createElement("img");
-    imgElement.src = logo;
-    imgElement.onload = function () {
-      let image = new fabric.FabricImage(imgElement);
-
-      canvas.clear();
-
-      const maxWidth = 280 * 0.5;
-      const maxHeight = 420 * 0.5;
-      const scale = Math.min(
-        maxWidth / image.width,
-        maxHeight / image.height,
-        1
-      );
-
-      image.set({
-        scaleX: scale,
-        scaleY: scale,
-        originX: "left",
-        originY: "left",
-      });
-
-      canvas.add(image);
-
-      canvas.on("object:modified", modifiedHandler);
-      canvas.centerObject(image);
-      canvas.setActiveObject(image);
-      canvas.renderAll();
-    };
+    if (canvas && logo) {
+      handleAddImage(logo);
+    }
   }, [canvas, logo]);
-  var modifiedHandler = function (evt) {
-    var modifiedObject = evt.target;
-
-    document.getElementById("modified").src = canvas.toDataURL();
-  };
 
   const handleAddImage = (logo) => {
     let imgElement = document.createElement("img");
+    imgElement.crossOrigin = "Anonymous";
     imgElement.src = logo;
+
     imgElement.onload = function () {
       let image = new fabric.Image(imgElement);
 
+      // Clear if you only want to allow one image
       canvas.clear();
 
-      const maxWidth = 280 * 0.5;
-      const maxHeight = 420 * 0.5;
+      const maxWidth = canvas.width * 0.5;
+      const maxHeight = canvas.height * 0.5;
       const scale = Math.min(
         maxWidth / image.width,
         maxHeight / image.height,
@@ -70,46 +45,53 @@ const ImagePlacer = ({ logo }) => {
       image.set({
         scaleX: scale,
         scaleY: scale,
-        originX: "left",
-        originY: "left",
+        originX: "center",
+        originY: "center",
+        left: canvas.width / 2,
+        top: canvas.height / 2,
       });
 
       canvas.add(image);
-      console.log(image);
-      canvas.on("object:modified", modifiedHandler);
-      canvas.centerObject(image);
       canvas.setActiveObject(image);
       canvas.renderAll();
+
+      // Add event listener for changes
+      canvas.on("object:modified", modifiedHandler);
     };
   };
+
+  const modifiedHandler = () => {
+    const activeObject = canvas.getActiveObject();
+    if (activeObject) {
+      const imageData = {
+        position: {
+          left: activeObject.left,
+          top: activeObject.top,
+        },
+        scale: {
+          x: activeObject.scaleX,
+          y: activeObject.scaleY,
+        },
+        rotation: activeObject.angle, // Get rotation in degrees
+      };
+      console.log(imageData);
+      getImageUrl(canvas.toDataURL(), imageData);
+    }
+  };
+
   return (
     <div className="flex gap-5">
       <div>
         <canvas
-          width="280"
-          height="280"
+          width="300"
+          height="400"
           style={{
-            border: "1px dotted black",
+            border: theme === "light" ? "1px dotted black" : "1px dotted white",
             margin: "0 16px",
           }}
-          ref={canvasref}
+          ref={canvasRef}
         />
       </div>
-      <div className="">
-        <img
-          id="modified"
-          width={"280"}
-          height={"280"}
-          src={logo}
-          className="border border-black"
-        />
-      </div>
-      <div
-        style={{
-          display: "flex",
-          margin: "0 16px",
-        }}
-      ></div>
     </div>
   );
 };

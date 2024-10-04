@@ -4,6 +4,7 @@ import { useUser } from "@clerk/clerk-react";
 import Sidebar from "./admin-components/SideBar";
 import MobileNav from "./admin-components/MobileNav";
 import { navLinks } from "@/constants/adminLinks";
+import { Toaster } from "./ui/toaster";
 const AdminCheck = () => {
   const { isSignedIn, isLoaded, user } = useUser();
   const location = useLocation();
