@@ -15,7 +15,7 @@ const Shirt = ({
   secondImageUrl,
 }) => {
   const { nodes, materials } = useGLTF(tshirt);
-  console.log(secondImageUrl);
+
   const [decalTexture, setDecalTexture] = useState(null);
 
   const [secondDecalTexture, setSecondDecalTexture] = useState(null);

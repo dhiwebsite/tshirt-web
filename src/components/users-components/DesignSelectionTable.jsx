@@ -49,7 +49,7 @@ function DesignSelectionTable() {
 
         <div className="">
           <DesignViewClient categoryName={value?.value} />
-          {/* {logos.map((logo) => {
+          {logos.map((logo) => {
             return (
               <div
                 key={logo}
@@ -67,7 +67,7 @@ function DesignSelectionTable() {
                 <img src={logo} height={150} width={150} />
               </div>
             );
-          })} */}
+          })}
         </div>
       </div>
     </>

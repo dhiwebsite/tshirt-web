@@ -12,7 +12,7 @@ const SecondDesignModal = ({ getSecondDesign }) => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger>
-        <p className="font-bold">Choose Second Design</p>
+        <p className="font-bold">Choose Back Design</p>
       </DialogTrigger>
 
       <DialogHeader>

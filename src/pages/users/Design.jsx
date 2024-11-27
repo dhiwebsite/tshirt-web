@@ -1,21 +1,34 @@
 import ImagePlacer from "@/components/users-components/ImagePlacer";
-import { SizeDropDown } from "@/components/users-components/SizeDropDown";
+
 import React, { Suspense, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import Shirt from "@/components/canvas/Shirt";
+
 import CanvasModel from "@/components/canvas";
-import { SketchPicker } from "react-color";
+
 import SecondDesignModal from "@/components/users-components/SecondDesignModal";
+
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuLabel,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 function Design() {
   const location = useLocation();
-  const image = location.state.logo;
+  const [image, setImage] = useState(location.state.logo);
   const [secondDesignUrl, setSecondDesignUrl] = useState(null);
   const navigate = useNavigate();
   const [modifiedImage, setModifiedImage] = useState(null);
   const [imageData, setImageData] = useState(null);
+
+  const [size, setSize] = useState("");
+  const [quantity, setQuantity] = useState(1);
 
   const [secondModifiedImage, setSecondModifiedImage] = useState(null);
   const [secondImageData, setSecondImageData] = useState(null);
@@ -26,7 +39,6 @@ function Design() {
   };
 
   const getSecondDesign = (url) => {
-    console.log(url);
     setSecondDesignUrl(url);
   };
   const [clr, setColor] = useState("white");
@@ -43,18 +55,29 @@ function Design() {
           <div>
             <p className="text-xl font-extrabold my-2">Live Preview</p>
           </div>
+
           <div className="flex gap-1">
             <div>
-              <ImagePlacer logo={image} getImageUrl={getImageUrl} />
+              <p className="font-bold mx-3">Front</p>
+              <ImagePlacer image={image} getImageUrl={getImageUrl} />
+              {image && (
+                <Button
+                  onClick={() => setImage(null)}
+                  variant="outline"
+                  className="text-sm ml-2"
+                >
+                  Remove Front Design
+                </Button>
+              )}
             </div>
-            {secondDesignUrl && (
-              <div>
-                <ImagePlacer
-                  logo={secondDesignUrl}
-                  getImageUrl={secondDesignHandler}
-                />
-              </div>
-            )}
+
+            <div>
+              <p className="font-bold mx-3">Back</p>
+              <ImagePlacer
+                logo={secondDesignUrl}
+                getImageUrl={secondDesignHandler}
+              />
+            </div>
           </div>
         </div>
 
@@ -73,14 +96,33 @@ function Design() {
 
       <div className="my-8 mx-4 flex gap-4 flex-col md:flex-row">
         <div>
-          <SketchPicker
-            onChange={(color) => {
-              setColor(color.hex);
-            }}
-            disableAlpha
-            presetColors={["#ffffff", "#000000"]}
-            color={clr}
-          />
+          <p className="font-bold">Choose Color</p>
+          <div>
+            <div
+              onClick={() => setColor("#000000")}
+              style={{
+                width: "100px",
+                height: "50px",
+                margin: "4px 0",
+                backgroundColor: "#000000",
+                cursor: "pointer",
+                border: clr === "#000000" ? "2px solid #0000ff" : "none",
+              }}
+            ></div>
+
+            <div
+              onClick={() => setColor("#ffffff")}
+              style={{
+                width: "100px",
+                height: "50px",
+                backgroundColor: "#ffffff",
+                cursor: "pointer",
+
+                border:
+                  clr === "#ffffff" ? "2px solid #0000ff" : "2px solid #000000",
+              }}
+            ></div>
+          </div>
         </div>
         <div>
           <div>
@@ -90,7 +132,7 @@ function Design() {
                   setSecondDesignUrl(null);
                 }}
               >
-                Remove Second Design
+                Remove Back Design
               </Button>
             ) : (
               <SecondDesignModal getSecondDesign={getSecondDesign} />
@@ -98,16 +140,45 @@ function Design() {
           </div>
           <div>
             <p className="my-1 font-semibold">Size</p>
-            <SizeDropDown />
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" className="w-[250px]">
+                  {size}
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-fit">
+                <DropdownMenuLabel>Select Size</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuRadioGroup value={size} onValueChange={setSize}>
+                  <DropdownMenuRadioItem value="XS">XS</DropdownMenuRadioItem>
+                  <DropdownMenuRadioItem value="S">S</DropdownMenuRadioItem>
+                  <DropdownMenuRadioItem value="M">M</DropdownMenuRadioItem>
+                  <DropdownMenuRadioItem value="L">L</DropdownMenuRadioItem>
+                  <DropdownMenuRadioItem value="XL">XL</DropdownMenuRadioItem>
+                  <DropdownMenuRadioItem value="XXL">XXL</DropdownMenuRadioItem>
+                </DropdownMenuRadioGroup>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
           <div className="my-4">
             <p className="my-1 font-semibold">Quantity</p>
-            <Input type="number" placeholder="1" min={1} />
+            <Input
+              type="number"
+              placeholder="1"
+              min={1}
+              value={quantity}
+              onChange={(event) => {
+                setQuantity(event.target.value);
+              }}
+            />
           </div>
 
           <div>
             <Button
               onClick={() => {
+                alert(size);
+                alert(quantity);
+                alert(clr);
                 navigate("/checkout");
               }}
             >

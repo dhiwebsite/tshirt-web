@@ -11,7 +11,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-export function SizeDropDown() {
+export function SizeDropDown({ sizeHandler }) {
   const [size, setSize] = React.useState("S");
 
   return (
@@ -24,7 +24,7 @@ export function SizeDropDown() {
       <DropdownMenuContent className="w-fit">
         <DropdownMenuLabel>Select Size</DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuRadioGroup value={size} onValueChange={setSize}>
+        <DropdownMenuRadioGroup value={size} onValueChange={sizeHandler}>
           <DropdownMenuRadioItem value="XS">XS</DropdownMenuRadioItem>
           <DropdownMenuRadioItem value="S">S</DropdownMenuRadioItem>
           <DropdownMenuRadioItem value="M">M</DropdownMenuRadioItem>

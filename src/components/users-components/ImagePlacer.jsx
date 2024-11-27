@@ -2,18 +2,28 @@ import React, { useContext, useEffect, useRef, useState } from "react";
 import * as fabric from "fabric";
 import { ThemeProviderContext, useTheme } from "../theme-provider";
 
-const ImagePlacer = ({ logo, getImageUrl }) => {
+const ImagePlacer = ({ image, getImageUrl }) => {
   const canvasRef = useRef();
   const [canvas, setCanvas] = useState(null);
   const { theme } = useContext(ThemeProviderContext);
 
+  const [logo, setLogo] = useState(image);
+
   useEffect(() => {
-    // Initialize canvas
+    setLogo(image);
+  }, [image]);
+
+  useEffect(() => {
+    if (canvas && !logo) {
+      canvas.clear();
+    }
+  }, [canvas, logo]);
+  useEffect(() => {
     let can = new fabric.Canvas(canvasRef.current);
     setCanvas(can);
 
     return () => {
-      can.dispose(); // Cleanup
+      can.dispose();
     };
   }, []);
 
@@ -31,7 +41,6 @@ const ImagePlacer = ({ logo, getImageUrl }) => {
     imgElement.onload = function () {
       let image = new fabric.Image(imgElement);
 
-      // Clear if you only want to allow one image
       canvas.clear();
 
       const maxWidth = canvas.width * 0.5;
@@ -74,7 +83,7 @@ const ImagePlacer = ({ logo, getImageUrl }) => {
         },
         rotation: activeObject.angle, // Get rotation in degrees
       };
-      console.log(imageData);
+
       getImageUrl(canvas.toDataURL(), imageData);
     }
   };
